@@ -3,30 +3,35 @@ import "./App.css";
 import Form from "./components/Form";
 import TodoList from "./components/TodoList";
 
+//false value returns array, postiive value returning what we have in local storage
+const getLocalTodos = () => {
+  return JSON.parse(localStorage.getItem("todos")) || [];
+};
+
 function App() {
-  //STATE
+  //GLOBAL STATE
   const [input, setInput] = useState("");
-  const [todos, setTodos] = useState([]);
+  const [todos, setTodos] = useState(getLocalTodos());
   const [stateTodo, setStateTodo] = useState("all");
   const [filteredTodos, setFilteredTodos] = useState([]);
-
-  useEffect(() => {
-    getLocalTodos();
-  }, []);
+  console.log(stateTodo);
 
   useEffect(() => {
     filterHandler();
     saveLocalTodos();
   }, [todos, stateTodo]);
+  //todos in the dependency array ensures that saveLocalTodos runs so that data in the local storage stays up to date with the data in the local state/App State
 
-  //filter function (run through todos if completed or not based on state)
+  //*filter function (run through todos if completed or not based on state)
 
   const filterHandler = () => {
     switch (stateTodo) {
       case "completed":
+        console.log("case complete");
         setFilteredTodos(todos.filter((todo) => todo.completed === true));
         break;
-      case "uncompleted":
+      case "incomplete":
+        console.log("case incomplete");
         setFilteredTodos(todos.filter((todo) => todo.completed === false));
         break;
       default:
@@ -34,19 +39,10 @@ function App() {
         break;
     }
   };
-
-  //save
+  // We want to seperate filtered "todos" and original "todos" not looping over filtered "todos" in Todo.js but original "todos"
+  //SAVE -  only creates and updates local storage with the latest data from Todos hook
   const saveLocalTodos = () => {
     localStorage.setItem("todos", JSON.stringify(todos));
-  };
-
-  const getLocalTodos = () => {
-    if (localStorage.getItem("todos") === null) {
-      localStorage.setItem("todos", JSON.stringify([]));
-    } else {
-      let todoLocal = JSON.parse(localStorage.getItem("todos"));
-      setTodos(todoLocal);
-    }
   };
 
   return (
@@ -57,10 +53,10 @@ function App() {
         setInput={setInput}
         todos={todos}
         setTodos={setTodos}
-        setStatTodo={setStateTodo}
+        setStateTodo={setStateTodo}
       />
       <TodoList
-        todos={todos}
+        todos={stateTodo === "all" ? todos : filteredTodos}
         setTodos={setTodos}
         filteredTodos={filteredTodos}
       />
@@ -69,3 +65,4 @@ function App() {
 }
 
 export default App;
+//!IMPLEMENT WAY TO NOT HAVE IDENTICAL TODOS

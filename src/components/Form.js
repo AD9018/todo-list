@@ -1,6 +1,6 @@
 import React from "react";
 
-const Form = ({ input, setInput, todos, setTodos, setStatTodo }) => {
+const Form = ({ input, setInput, todos, setTodos, setStateTodo }) => {
   const inputTextHandler = (e) => {
     console.log("inputTextHandler", e.target.value);
     setInput(e.target.value);
@@ -8,15 +8,12 @@ const Form = ({ input, setInput, todos, setTodos, setStatTodo }) => {
 
   const submitHandler = (e) => {
     e.preventDefault();
-    setTodos([
-      ...todos,
-      { id: Math.random() * 1000, text: input, completed: false },
-    ]);
+    setTodos([...todos, { id: Date.now(), text: input, completed: false }]);
     setInput("");
   };
 
   const statusHandler = (e) => {
-    setStatTodo(e.target.value);
+    setStateTodo(e.target.value);
   };
 
   return (
@@ -25,18 +22,16 @@ const Form = ({ input, setInput, todos, setTodos, setStatTodo }) => {
         value={input}
         onChange={inputTextHandler}
         type="text"
-        class="todo-input"
+        className="todo-input"
       />
-      <button
-        onClick={submitHandler}
-        class="todo-button"
-        type="submit"
-      ></button>
-      <div class="select">
-        <select onChange={statusHandler} name="todos" class="filter-todo">
+      <button onClick={submitHandler} className="todo-button" type="submit">
+        Submit
+      </button>
+      <div className="select">
+        <select onChange={statusHandler} name="todos" className="filter-todo">
           <option value="all">All</option>
           <option value="completed">Completed</option>
-          <option value="uncompleted">Uncompleted</option>
+          <option value="incomplete">Incomplete</option>
         </select>
       </div>
     </form>
